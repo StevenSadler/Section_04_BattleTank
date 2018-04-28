@@ -17,7 +17,8 @@ public:
 
 	void SetBarrelReference(UStaticMeshComponent* BarrelToSet);
 
-	void AimAt(FVector HitLocation);
+	void AimAt(FVector HitLocation, float LaunchSpeed);
+	void AimAtWithLog(FVector HitLocation, float LaunchSpeed);
 
 protected:
 	// Called when the game starts
