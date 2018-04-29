@@ -44,12 +44,10 @@ void UTankAimingComponent::AimAt(FVector HitLocation, float LaunchSpeed)
 	if (bHasAimSolution)
 	{
 		auto AimDirection = TossVelocity.GetSafeNormal();
-		auto TankName = GetOwner()->GetName();
-		//UE_LOG(LogTemp, Warning, TEXT("%s aiming at %s"), *TankName, *AimDirection.ToString());
+		MoveBarrelTo(AimDirection);
 
 		auto Time = GetWorld()->GetTimeSeconds();
 		UE_LOG(LogTemp, Warning, TEXT("%f: Aim solution found"), Time);
-		MoveBarrelTo(AimDirection);
 	}
 	else
 	{
@@ -64,9 +62,6 @@ void UTankAimingComponent::MoveBarrelTo(FVector AimDirection)
 	auto BarrelRotator = Barrel->GetForwardVector().Rotation();
 	auto AimRotator = AimDirection.Rotation();
 	auto DeltaRotator = AimRotator - BarrelRotator;
-	//UE_LOG(LogTemp, Warning, TEXT("AimRotator: %s"), *AimRotator.ToString());
 
-	// move the barrel the right amount this frame
-	// given a max elevation speed and the frame time
-	Barrel->Elevate(5); // TODO remove magic number
+	Barrel->Elevate(DeltaRotator.Pitch); // TODO remove magic number
 }
