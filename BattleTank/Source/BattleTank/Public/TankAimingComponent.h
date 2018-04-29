@@ -22,8 +22,7 @@ public:
 
 	// TODO add SetTurretReference
 
-	void AimAt(FVector HitLocation, float LaunchSpeed, bool log = false);
-	void AimAtWithLog(FVector HitLocation, float LaunchSpeed);
+	void AimAt(FVector HitLocation, float LaunchSpeed);
 
 private:
 	UTankBarrel* Barrel = nullptr;

@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "BattleTank.h"
+#include "Tank.h"
 #include "TankPlayerController.h"
 
 void ATankPlayerController::BeginPlay()
@@ -33,13 +34,16 @@ void ATankPlayerController::AimTowardsCrosshair()
 {
 	if (!GetControlledTank()) { return; }
 
+	auto Time = GetWorld()->GetTimeSeconds();
+	UE_LOG(LogTemp, Warning, TEXT("%f: AimTowardsCrosshair called"), Time);
+
 	FVector HitLocation; // out parameter
 	if (GetSightRayHitLocation(HitLocation)) // has a side effect, is goint to line trace
 	{
 		//UE_LOG(LogTemp, Warning, TEXT("Hit location: %s"), *HitLocation.ToString());
 		// then tell controlled tank to aim at this point
 
-		GetControlledTank()->AimAtWithLog(HitLocation);
+		GetControlledTank()->AimAt(HitLocation);
 	}
 }
 

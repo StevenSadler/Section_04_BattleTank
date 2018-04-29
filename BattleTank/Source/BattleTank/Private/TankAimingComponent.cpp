@@ -21,16 +21,7 @@ void UTankAimingComponent::SetBarrelReference(UTankBarrel* BarrelToSet)
 	Barrel = BarrelToSet;
 }
 
-void UTankAimingComponent::AimAtWithLog(FVector HitLocation, float LaunchSpeed)
-{
-	AimAt(HitLocation, LaunchSpeed, true);
-	//auto MyTankName = GetOwner()->GetName();
-	//auto BarrelLocation = Barrel->GetComponentLocation();
-	//UE_LOG(LogTemp, Warning, TEXT("%s aiming at %s from %s"), *MyTankName, *HitLocation.ToString(), *BarrelLocation.ToString());
-	//UE_LOG(LogTemp, Warning, TEXT("Firing at %f"), LaunchSpeed);
-}
-
-void UTankAimingComponent::AimAt(FVector HitLocation, float LaunchSpeed, bool log)
+void UTankAimingComponent::AimAt(FVector HitLocation, float LaunchSpeed)
 {
 	if (!Barrel) { return; }
 
@@ -54,17 +45,16 @@ void UTankAimingComponent::AimAt(FVector HitLocation, float LaunchSpeed, bool lo
 	{
 		auto AimDirection = TossVelocity.GetSafeNormal();
 		auto TankName = GetOwner()->GetName();
-		if (log)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("%s aiming at %s"), *TankName, *AimDirection.ToString());
-		}
+		//UE_LOG(LogTemp, Warning, TEXT("%s aiming at %s"), *TankName, *AimDirection.ToString());
 
+		auto Time = GetWorld()->GetTimeSeconds();
+		UE_LOG(LogTemp, Warning, TEXT("%f: Aim solution found"), Time);
 		MoveBarrelTo(AimDirection);
 	}
 	else
 	{
 		auto Time = GetWorld()->GetTimeSeconds();
-		UE_LOG(LogTemp, Warning, TEXT("%f: No aim solution found"), Time);
+		UE_LOG(LogTemp, Warning, TEXT("%f: No aim solve found"), Time);
 	}
 }
 
@@ -74,7 +64,7 @@ void UTankAimingComponent::MoveBarrelTo(FVector AimDirection)
 	auto BarrelRotator = Barrel->GetForwardVector().Rotation();
 	auto AimRotator = AimDirection.Rotation();
 	auto DeltaRotator = AimRotator - BarrelRotator;
-	UE_LOG(LogTemp, Warning, TEXT("AimRotator: %s"), *AimRotator.ToString());
+	//UE_LOG(LogTemp, Warning, TEXT("AimRotator: %s"), *AimRotator.ToString());
 
 	// move the barrel the right amount this frame
 	// given a max elevation speed and the frame time
