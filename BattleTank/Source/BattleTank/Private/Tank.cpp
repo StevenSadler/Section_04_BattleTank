@@ -50,7 +50,7 @@ void ATank::AimAt(FVector HitLocation)
 
 void ATank::Fire()
 {
-	double CurrentTime = FPlatformTime::Seconds();
+	double CurrentTime = GetWorld()->GetTimeSeconds();
 	bool isLoaded = (CurrentTime - LastFireTime) > ReloadTimeInSeconds;
 	if (Barrel && isLoaded)
 	{
