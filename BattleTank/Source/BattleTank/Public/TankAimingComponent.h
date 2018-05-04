@@ -37,11 +37,13 @@ public:
 
 protected:
 	UPROPERTY(BlueprintReadOnly)
-	EFiringState FiringState = EFiringState::Aiming;
+	EFiringState FiringState = EFiringState::Loading;
 
 private:
 	// Sets default values for this component's properties
 	UTankAimingComponent();
+
+	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
 
 	void MoveBarrelTo(FVector AimDirection);
 
