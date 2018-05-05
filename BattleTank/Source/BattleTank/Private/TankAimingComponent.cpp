@@ -20,8 +20,11 @@ UTankAimingComponent::UTankAimingComponent()
 
 void UTankAimingComponent::TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction)
 {
-	double CurrentTime = GetWorld()->GetTimeSeconds();
-	if ((CurrentTime - LastFireTime) < ReloadTimeInSeconds)
+	if (RoundsLeft < 1)
+	{
+		FiringState = EFiringState::OutOfAmmo;
+	}
+	else if ((GetWorld()->GetTimeSeconds() - LastFireTime) < ReloadTimeInSeconds)
 	{
 		FiringState = EFiringState::Loading;
 	}
@@ -54,6 +57,11 @@ EFiringState UTankAimingComponent::GetFiringState() const
 	return FiringState;
 }
 
+int UTankAimingComponent::GetRoundsLeft() const
+{
+	return RoundsLeft;
+}
+
 void UTankAimingComponent::AimAt(FVector HitLocation)
 {
 	if (!ensure(Barrel)) { return; }
@@ -77,11 +85,11 @@ void UTankAimingComponent::AimAt(FVector HitLocation)
 	if (bHasAimSolution)
 	{
 		AimDirection = TossVelocity.GetSafeNormal();
-		MoveBarrelTo(AimDirection);
+		MoveBarrel();
 	}
 }
 
-void UTankAimingComponent::MoveBarrelTo(FVector AimDirection)
+void UTankAimingComponent::MoveBarrel()
 {
 	if (!ensure(Barrel) || !ensure(Turret)) { return; }
 
@@ -95,11 +103,11 @@ void UTankAimingComponent::MoveBarrelTo(FVector AimDirection)
 	float yaw = DeltaRotator.Yaw;
 	if (yaw > 180)
 	{
-		yaw = 360 - yaw;
+		yaw = yaw - 360;
 	}
 	else if (yaw < -180)
 	{
-		yaw = 360 + yaw;
+		yaw = yaw + 360;
 	}
 	Turret->Rotate(yaw);
 }
@@ -108,7 +116,7 @@ void UTankAimingComponent::Fire()
 {
 	double CurrentTime = GetWorld()->GetTimeSeconds();
 	bool isLoaded = (CurrentTime - LastFireTime) > ReloadTimeInSeconds;
-	if (FiringState != EFiringState::Loading)
+	if (FiringState == EFiringState::Aiming || FiringState == EFiringState::Ready)
 	{
 		if (!ensure(Barrel)) { return; }
 		if (!ensure(ProjectileBlueprint)) { return; }
@@ -122,5 +130,6 @@ void UTankAimingComponent::Fire()
 
 		Projectile->LaunchProjectile(LaunchSpeed);
 		LastFireTime = CurrentTime;
+		RoundsLeft--;
 	}
 }
